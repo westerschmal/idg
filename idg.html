@@ -200,8 +200,6 @@ IDGdfpAds['ad_mpu-mob'] = googletag.defineSlot('/8456/IDG.NL_B2B_WebWereld.nl/ho
                         
         var pubads = googletag.pubads();
 
-        
-        pubads.collapseEmptyDivs(true);
 
         pubads.addEventListener('slotRenderEnded', function(e) {
             if ($('#ad_mpu div').height() >= 600) {
@@ -219,8 +217,8 @@ IDGdfpAds['ad_mpu-mob'] = googletag.defineSlot('/8456/IDG.NL_B2B_WebWereld.nl/ho
                                 googletag.pubads().setTargeting(k, fob.dfp.data[k]);
                             });
                         }
+                         	googletag.enableServices(); 
 
-                        console.log('Googletag services enabled');
                         // defineAdUnits is a function defined by Adhese when this script has been loaded
                         typeof defineAdUnits === 'function' ? defineAdUnits() : googletag.pubads().refresh();
                             
@@ -319,13 +317,20 @@ IDGdfpAds['ad_mpu-mob'] = googletag.defineSlot('/8456/IDG.NL_B2B_WebWereld.nl/ho
             };
         })();
 
-        googletag.cmd = googletag.cmd || [];
+        //googletag.cmd = googletag.cmd || [];
         
         if (window.idgnl.cmp) {
             if (debug) { console.log('GDPR','gpt.js delayed loading'); }
                        
             window.idgnl.cmp.gpt.then( function(hasConsent) {
-                googletag.enableServices(); 
+
+            	googletag.pubads().collapseEmptyDivs(true);
+            	googletag.pubads().enableLazyLoad({
+				  fetchMarginPercent: 100,  // Fetch slots within 1 viewports.
+				  renderMarginPercent: 25,  // Render slots within 0.25 viewports.
+				  mobileScaling: 2.0  // Double the above values on mobile.
+				});
+
 
                 if (hasConsent) {
                     loadPersonalizedDfp();
@@ -333,6 +338,7 @@ IDGdfpAds['ad_mpu-mob'] = googletag.defineSlot('/8456/IDG.NL_B2B_WebWereld.nl/ho
                     googletag.cmd.unshift(function() {
                         if (debug) { console.log('GDPR','setRequestNonPersonalizedAds set'); }
                         googletag.pubads().setRequestNonPersonalizedAds(1);
+                        googletag.enableServices(); 
                         googletag.pubads().refresh();
                     });
                 }
